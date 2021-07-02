@@ -34,24 +34,3 @@ for k in df:
         df[k] = df[k].astype('int16')
 
 df.to_hdf("{}.h5".format(output_file_str), key='df')
-
-
-#import pandas as pd
-#
-#output_file_str = "events_bbtautau_2017_SR"
-#
-#df1 = pd.read_hdf("GGHH_NLO_cHHH1_SR.h5")
-#df2 = pd.read_hdf("VBFHH_CV_1_C2V_1_C3_1_SR.h5")
-#df3 = pd.read_hdf("DY_SR.h5")
-#df4 = pd.read_hdf("TT_semiLep_SR.h5")
-#
-#frames = [df1, df2, df3, df4]
-#
-#df = pd.concat(frames)
-#
-#df.to_hdf("{}.h5".format(output_file_str), key='df')
-#
-#import pandas as pd
-#df = pd.read_hdf("events_bbtautau_2017_SR.h5")
-#df = df.sample(frac=1).reset_index(drop=True)
-#df.to_hdf("events_bbtautau_2017_SR_shuffled.h5", key='df')
