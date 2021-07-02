@@ -22,12 +22,12 @@ vars_with_y_log_scale = [
 
 def filter_channel(df, channel = None):
     df1 = df
-    if channel in set(df['channel_reco']):
-        df1 = df.loc[(df['channel_reco'] == channel)]
+    if channel in set(df['channel']):
+        df1 = df.loc[(df['channel'] == channel)]
     elif channel == "lt":
-        df1 = df.loc[(df['channel_reco'] == "mt") | (df['channel_reco'] == "et")]
+        df1 = df.loc[(df['channel'] == "mt") | (df['channel'] == "et")]
     elif channel == "ll":
-        df1 = df.loc[(df['channel_reco'] == "mm") | (df['channel_reco'] == "em") | (df['channel_reco'] == "ee")]
+        df1 = df.loc[(df['channel'] == "mm") | (df['channel'] == "em") | (df['channel'] == "ee")]
     return df1    
 
 def gen_vs_reco(df, channel, model_name, min_mass, max_mass, language=default_language, prefix = '', file_format = 'png', **kwargs):
@@ -237,7 +237,7 @@ def model_response_tau_filtered(df, channel, model_name, min_mass, max_mass, lan
         
         model_response(df1, channel, model_name, min_mass, max_mass, language, prefix = prefix+"FilterBy"+filter, min_resp=min_resp, max_resp=max_resp)
 
-def model_response(df, channel, model_name, min_mass, max_mass, language = default_language, prefix = '', file_format = 'png', min_resp=0.3, max_resp=2.0, plot_relres_model_ref_1TeV = False, **kwargs):
+def model_response(df, channel, model_name, min_mass, max_mass, language = default_language, prefix = '', file_format = 'png', min_resp=0.5, max_resp=1.5, plot_relres_model_ref_1TeV = False, **kwargs):
     df1 = filter_channel(df, channel)
         
     medians_model = []
@@ -278,7 +278,7 @@ def model_response(df, channel, model_name, min_mass, max_mass, language = defau
         xpos.append((mHrange[1]+mHrange[0])/2)
         xerr.append((mHrange[1]-mHrange[0])/2)
 
-        mTtots = np.r_[df2["PuppimTtot_reco"]]
+        mTtots = np.r_[df2["mTtot"]]
         mHs = np.r_[df2[target]]
         values_model = predictions/mHs
         values_model_diff = predictions - mHs
@@ -435,7 +435,7 @@ def model_response(df, channel, model_name, min_mass, max_mass, language = defau
     
     plt.plot([min_mass, max_mass], [0,0], color='C3')    
 
-    plt.ylim(-500,500)
+    plt.ylim(-100,100)
     plt.xlim(min_mass, max_mass)
 
     ax.legend(loc='upper right')
@@ -631,8 +631,8 @@ def predicted_vs_answers(df, channel, model_name, min_mass, max_mass, language =
     fig.savefig("predicted_on_answers-{}{}{}.{}".format(prefix, model_name, "-en" if language=='en' else "", file_format))
 
 def predictions_distributions(df_all, channel, model_name, language = default_language, prefix = '', file_format = 'png', **kwargs):
-    mass_points_GeV = [90, 125, 300, 500, 700, 800]
-    width_GeV = 1.0
+    mass_points_GeV = [125]
+    width_GeV = 150
     for data_category in ["is_train", "is_valid", "is_test"]:
         for mass_point_GeV in mass_points_GeV:
             df = filter_channel(df_all, channel=channel)
@@ -665,7 +665,7 @@ def _variable_distribution(df, var, channel, data_category, model_name = None, l
     min_value = df[var].min()
     max_value = df[var].max()
     if binning is None:
-        binning = np.arange(min_value, max_value, 10)
+        binning = np.arange(min_value, max_value, 2)
         if len(binning) < 50:
             binning = binning_default
         if var == target:
@@ -680,8 +680,9 @@ def _variable_distribution(df, var, channel, data_category, model_name = None, l
     if density:
         ax.set_ylabel(labels["Probability"][language])
     if var in [target, 'predictions']:
-        plt.xlim(0, 1000)
+        plt.xlim(0, 300)
     fig.tight_layout()
+    print (df[var].describe())
     if var == "predictions":
         plt.savefig('distribution-{}-{}-{}-{}{}.{}'.format(channel, "-".join([var, "{}{}".format(prefix,model_name)]), weights_in_output_name, data_category, "-en" if language=='en' else "", file_format))
     else:

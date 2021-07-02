@@ -25,7 +25,7 @@ parser.add_argument("--channel",
                     default = "inclusive",
                     help = "Channel to run on: inclusive, tt, mt, et, mm, em, ee, lt, ll")
 parser.add_argument("--plots",
-                    default = 'model_response,predicted_vs_answers,feature_importance',
+                    default = 'model_response,predicted_vs_answers,feature_importance,predictions_distributions',
                     help = "Plots to process. For available plots, see the macro.py module.")
 parser.add_argument("--subsample",
                     default = 'test',

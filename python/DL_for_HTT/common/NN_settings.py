@@ -2,20 +2,20 @@
 
 # Higgs mass range in GeV
 min_mass = 50
-max_mass = 1000
+max_mass = 250
 
 # channels to process
 channels = "inclusive"
 
 # NN structure
-Nlayers = 3
-Nneurons = 1000
+Nlayers = 10
+Nneurons = 100
 
 # NN training
 loss = "mapesqrt_b"
 optimizer = "Adam"
 w_init_mode = "glorot_uniform"
-activation = "softplus"
+activation = "relu"
 
 # Dataset splitting
 train_frac = 0.7
@@ -23,7 +23,7 @@ valid_frac = 0.2
 random_seed = 2020
 
 # Target and inputs
-target = "Higgs_mass_gen"
+target = "tauH_SVFIT_mass"
 
 default_model_inputs_file = "PuppiMET_with_METcov_j1j2jr_Nnu_Npu"
 model_inputs_file = __import__('DL_for_HTT.common.model_inputs.{}'.format(default_model_inputs_file), fromlist=[''])

@@ -110,6 +110,11 @@ def load_model_from_json(input_json):
 def load_h5_file_and_predict(input_h5, loaded_model, model_type, model_name, only=None, inputs = NN_default_settings.inputs, target = NN_default_settings.target):
     df = pd.read_hdf(input_h5)
 
+#    from sklearn.preprocessing import StandardScaler
+#    scaler  = StandardScaler()
+#    scaler.fit(df[inputs])
+#    df[inputs] = pd.DataFrame(scaler.transform(df[inputs]),columns=df[inputs].columns)
+    
     if only != None:
         df = df.loc[df['is_{}'.format(only)] == 1]
     

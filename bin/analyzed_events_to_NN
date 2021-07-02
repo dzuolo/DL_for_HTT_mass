@@ -42,27 +42,39 @@ import pandas as pd
 df = pd.read_hdf(input_file)
 
 # make transverse masses
-pt_str = "pt"
-phi_str = "phi"    
-for ana in ["reco", "gen"]:
-    df["mT1_{ana}".format(ana=ana)] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
-    df["mT2_{ana}".format(ana=ana)] = (2*df["tau2_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau2_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
-    df["mTtt_{ana}".format(ana=ana)] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*df["tau2_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["tau2_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
-    df["mTtot_{ana}".format(ana=ana)] = (df["mT1_{ana}".format(ana=ana)].astype('float32')**2+df["mT2_{ana}".format(ana=ana)].astype('float32')**2+df["mTtt_{ana}".format(ana=ana)].astype('float32')**2)**.5
+#pt_str = "pt"
+#phi_str = "phi"    
+#for ana in ["reco", "gen"]:
+#    df["mT1_{ana}".format(ana=ana)] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
+#    df["mT2_{ana}".format(ana=ana)] = (2*df["tau2_{pt}_{ana}".format(pt=pt_str, ana=ana)].astypepopoooooooooooooooooooooo90-('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau2_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
+#    df["mTtt_{ana}".format(ana=ana)] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*df["tau2_{pt}_{ana}".format(pt=pt_str, ana=ana)].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32')-df["tau2_{phi}_{ana}".format(phi=phi_str, ana=ana)].astype('float32'))))**.5
+#    df["mTtot_{ana}".format(ana=ana)] = (df["mT1_{ana}".format(ana=ana)].astype('float32')**2+df["mT2_{ana}".format(ana=ana)].astype('float32')**2+df["mTtt_{ana}".format(ana=ana)].astype('float32')**2)**.5
+#
+#df["PuppimT1_{ana}".format(ana="reco")] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*df["PuppiMET_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32')-df["PuppiMET_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32'))))**.5
+#df["PuppimT2_{ana}".format(ana="reco")] = (2*df["tau2_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*df["PuppiMET_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*(1-np.cos(df["tau2_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32')-df["PuppiMET_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32'))))**.5
+#df["PuppimTtt_{ana}".format(ana="reco")] = df["mTtt_{ana}".format(ana="reco")]
+#df["PuppimTtot_{ana}".format(ana="reco")] = (df["PuppimT1_{ana}".format(ana="reco")].astype('float32')**2+df["PuppimT2_{ana}".format(ana="reco")].astype('float32')**2+df["PuppimTtt_{ana}".format(ana="reco")].astype('float32')**2)**.5
+#
+#df["mT1_{ana}".format(ana="leg_gen")] = (2*df["leg1_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg1_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32'))))**.5
+#df["mT2_{ana}".format(ana="leg_gen")] = (2*df["leg2_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg2_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32'))))**.5
+#df["mTtt_{ana}".format(ana="leg_gen")] = (2*df["leg1_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["leg2_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg1_{phi}_{ana}".format(phi=phi_str,ana="gen")].astype('float32')-df["leg2_{phi}_{ana}".format(phi=phi_str,ana="gen")].astype('float32'))))**.5
+#df["mTtot_{ana}".format(ana="leg_gen")] = (df["mT1_{ana}".format(ana="leg_gen")].astype('float32')**2+df["mT2_{ana}".format(ana="leg_gen")].astype('float32')**2+df["mTtt_{ana}".format(ana="leg_gen")].astype('float32')**2)**.5
 
-df["PuppimT1_{ana}".format(ana="reco")] = (2*df["tau1_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*df["PuppiMET_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*(1-np.cos(df["tau1_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32')-df["PuppiMET_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32'))))**.5
-df["PuppimT2_{ana}".format(ana="reco")] = (2*df["tau2_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*df["PuppiMET_{pt}_{ana}".format(pt=pt_str, ana="reco")].astype('float32')*(1-np.cos(df["tau2_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32')-df["PuppiMET_{phi}_{ana}".format(phi=phi_str, ana="reco")].astype('float32'))))**.5
-df["PuppimTtt_{ana}".format(ana="reco")] = df["mTtt_{ana}".format(ana="reco")]
-df["PuppimTtot_{ana}".format(ana="reco")] = (df["PuppimT1_{ana}".format(ana="reco")].astype('float32')**2+df["PuppimT2_{ana}".format(ana="reco")].astype('float32')**2+df["PuppimTtt_{ana}".format(ana="reco")].astype('float32')**2)**.5
-
-df["mT1_{ana}".format(ana="leg_gen")] = (2*df["leg1_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg1_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32'))))**.5
-df["mT2_{ana}".format(ana="leg_gen")] = (2*df["leg2_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["MET_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg2_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32')-df["MET_{phi}_{ana}".format(phi=phi_str, ana="gen")].astype('float32'))))**.5
-df["mTtt_{ana}".format(ana="leg_gen")] = (2*df["leg1_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*df["leg2_{pt}_{ana}".format(pt=pt_str, ana="gen")].astype('float32')*(1-np.cos(df["leg1_{phi}_{ana}".format(phi=phi_str,ana="gen")].astype('float32')-df["leg2_{phi}_{ana}".format(phi=phi_str,ana="gen")].astype('float32'))))**.5
-df["mTtot_{ana}".format(ana="leg_gen")] = (df["mT1_{ana}".format(ana="leg_gen")].astype('float32')**2+df["mT2_{ana}".format(ana="leg_gen")].astype('float32')**2+df["mTtt_{ana}".format(ana="leg_gen")].astype('float32')**2)**.5
+df["mT1"  ] = (2*df["tau1_pt"]*df["MET_pt" ]*(1-np.cos(df["tau1_phi"]-df["MET_phi" ])))**.5
+df["mT2"  ] = (2*df["tau2_pt"]*df["MET_pt" ]*(1-np.cos(df["tau2_phi"]-df["MET_phi" ])))**.5
+df["mTtt" ] = (2*df["tau1_pt"]*df["tau2_pt"]*(1-np.cos(df["tau1_phi"]-df["tau2_phi"])))**.5
+df["mTtot"] = (df["mT1"]**2+df["mT2"]**2+df["mTtt"]**2)**.5
+df["N_neutrinos"] = 2*np.ones(len(df["channel"]), dtype='int')
+df.loc[(df["channel"] == "tt"), ["N_neutrinos"]] = 2
+df.loc[(df["channel"] == "mt"), ["N_neutrinos"]] = 3
+df.loc[(df["channel"] == "et"), ["N_neutrinos"]] = 3
+df.loc[(df["channel"] == "mm"), ["N_neutrinos"]] = 4
+df.loc[(df["channel"] == "em"), ["N_neutrinos"]] = 4
+df.loc[(df["channel"] == "ee"), ["N_neutrinos"]] = 4
     
 
 # define target and input variables
-target = "Higgs_mass_gen"
+target = "tauH_SVFIT_mass"
 
 # look for variables distributions
 # df.hist(figsize = (24,20), bins = 500, log=True)
@@ -137,11 +149,7 @@ for subsample in ["is_train", "is_valid", "is_test"]:
 for k in df:
     if any([s in k for s in ["is_", "was_"]]):
         df[k] = df[k].astype('bool')
-    elif k == 'Event_gen':
-        df[k] = df[k].astype('int32')
-    elif any([s in k for s in ["_charge_", "_pdgId_"]]):
-        df[k] = df[k].astype('int8')
-    elif any([s in k for s in ["_eta_", "_phi_", "_pt_", "_mass_", "_btagDeepB_", "mT"]]):
+    elif any([s in k for s in ["_eta", "_phi", "_pt", "_deepFlavor", "mT"]]):
         df[k] = df[k].astype('float16')
     elif df[k].dtype == 'float64':
         df[k] = df[k].astype('float32')

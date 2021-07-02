@@ -104,9 +104,9 @@ def _get_available_gpus():
         tfback._LOCAL_DEVICES = [x.name for x in devices]
     return [x for x in tfback._LOCAL_DEVICES if 'device:gpu' in x.lower()]
 
-gpus = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(gpus[options.gpu], True)
-tf.config.set_visible_devices(gpus[options.gpu], 'GPU')
+#gpus = tf.config.experimental.list_physical_devices('GPU')
+#tf.config.experimental.set_memory_growth(gpus[options.gpu], True)
+#tf.config.set_visible_devices(gpus[options.gpu], 'GPU')
 
 tfback._get_available_gpus = _get_available_gpus
 print(_get_available_gpus())
@@ -282,13 +282,14 @@ print("Target: {}".format(target))
 model_inputs_file = __import__('DL_for_HTT.common.model_inputs.{}'.format(options.model_inputs), fromlist=[''])
 model_inputs = model_inputs_file.inputs
 
-if "N_neutrinos_reco" in model_inputs:
-    df["N_neutrinos_reco"] = 2*np.ones(len(df["channel_reco"]), dtype='int')
-    df.loc[(df["channel_reco"] == "mt"), ["N_neutrinos_reco"]] = 3
-    df.loc[(df["channel_reco"] == "et"), ["N_neutrinos_reco"]] = 3
-    df.loc[(df["channel_reco"] == "mm"), ["N_neutrinos_reco"]] = 4
-    df.loc[(df["channel_reco"] == "em"), ["N_neutrinos_reco"]] = 4
-    df.loc[(df["channel_reco"] == "ee"), ["N_neutrinos_reco"]] = 4
+#if "N_neutrinos" in model_inputs:
+#    df["N_neutrinos"] = 2*np.ones(len(df["channel"]), dtype='int')
+#    df.loc[(df["channel"] == "tt"), ["N_neutrinos"]] = 2
+#    df.loc[(df["channel"] == "mt"), ["N_neutrinos"]] = 3
+#    df.loc[(df["channel"] == "et"), ["N_neutrinos"]] = 3
+#    df.loc[(df["channel"] == "mm"), ["N_neutrinos"]] = 4
+#    df.loc[(df["channel"] == "em"), ["N_neutrinos"]] = 4
+#    df.loc[(df["channel"] == "ee"), ["N_neutrinos"]] = 4
 
 if "tau1_px_reco" in model_inputs:
     for ptc in ["tau1", "tau2", "jet1", "jet2", "remaining_jets", "MET", "PuppiMET"]:
@@ -315,7 +316,7 @@ def plot_hist(h, NNname, xsize=6, ysize=10):
     
     # summarize history for MAE
     ax=plt.subplot(211)
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
     plt.plot(h['mean_absolute_error'])
     plt.plot(h['val_mean_absolute_error'])
     plt.title('Training vs Validation MAE')
@@ -326,7 +327,7 @@ def plot_hist(h, NNname, xsize=6, ysize=10):
     
     # summarize history for loss
     ax=plt.subplot(212)
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
     plt.plot(h['loss'])
     plt.plot(h['val_loss'])
     plt.title('Training vs Validation Loss')
@@ -356,17 +357,23 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
 
     df_select = df_select.loc[(df_select[target] >= min_mass) & (df_select[target] <= max_mass)]
 
-    if channel in set(df_select['channel_reco']):
-        df_select = df_select.loc[(df_select['channel_reco'] == channel)]
+    if channel in set(df_select['channel']):
+        df_select = df_select.loc[(df_select['channel'] == channel)]
     elif channel == "lt":
-        df_select = df_select.loc[(df_select['channel_reco'] == "mt") | (df_select['channel_reco'] == "et")]
+        df_select = df_select.loc[(df_select['channel'] == "mt") | (df_select['channel'] == "et")]
     elif channel == "ll":
-        df_select = df_select.loc[(df_select['channel_reco'] == "mm") | (df_select['channel_reco'] == "em") | (df_select['channel_reco'] == "ee")]
+        df_select = df_select.loc[(df_select['channel'] == "mm") | (df_select['channel'] == "em") | (df_select['channel'] == "ee")]
 
     df_x_train = df_select.loc[(df_select['is_train'] == 1), model_inputs]
     df_y_train = df_select.loc[(df_select['is_train'] == 1), [target, "sample_weight"]]
     df_x_valid = df_select.loc[(df_select['is_valid'] == 1), model_inputs]
     df_y_valid = df_select.loc[(df_select['is_valid'] == 1), [target, "sample_weight"]]
+
+#    from sklearn.preprocessing import StandardScaler
+#    scaler  = StandardScaler()
+#    scaler.fit(df_x_train)
+#    arr_x_train = scaler.transform(df_x_train)
+#    arr_x_valid = scaler.transform(df_x_valid)
 
     print('Size of training set: ', len(df_x_train))
     print('Size of valid set: ', len(df_x_valid))
@@ -417,7 +424,7 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
                      metrics=[keras.metrics.mae])
     
     # Train model
-    epochs = 500
+    epochs = 200
     print('Epochs: ', epochs)
     print('Batch size: ', batch_size)
 
@@ -430,7 +437,7 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
                            verbose=2, # Change it to 2, if wished to observe execution
                            validation_data=(arr_x_valid, arr_y_valid),
                            callbacks=keras_callbacks,
-                           sample_weight = sample_weight,
+#                           sample_weight = sample_weight,
     )
 
     # Evaluate and report performance of the trained model

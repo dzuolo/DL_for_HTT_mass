@@ -1,0 +1,202 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+#Files
+#/gwteraz/users/dzuolo/HHbbtautauAnalysis/SKIMMED_Legacy2017_19Feb2021/SKIM_GGHH_NLO_cHHH1_xs/output.root
+#/gwteraz/users/dzuolo/HHbbtautauAnalysis/SKIMMED_Legacy2017_19Feb2021/SKIM_VBFHH_CV_1_C2V_1_C3_1_xs/output.root
+#/gwteraz/users/dzuolo/HHbbtautauAnalysis/SKIMMED_Legacy2017_19Feb2021/SKIM_TT_semiLep/output.root
+#/gwteraz/users/dzuolo/HHbbtautauAnalysis/SKIMMED_Legacy2017_19Feb2021/SKIM_DY/output.root
+#
+#2016
+#MuTau+TauTau: /gwteraz/users/brivio/SKIMS_Legacy2016_16Feb2021/SKIM_VBFHHTo2B2Tau_CV_1_C2V_1_C3_1/total.root
+#ETau: /gwteraz/users/brivio/SKIMS_Legacy2016_16Feb2021_ETau/SKIM_VBFHHTo2B2Tau_CV_1_C2V_1_C3_1/total.root
+#
+#2018
+#MuTau+TauTau: /gwteraz/users/brivio/SKIMS_Legacy2018_16Feb2021/SKIM_VBFHH_CV_1_C2V_1_C3_1_xs/total.root
+#ETau: /gwteraz/users/brivio/SKIMS_Legacy2018_16Feb2021_ETau/SKIM_VBFHH_CV_1_C2V_1_C3_1_xs/total.root
+#
+#2016
+#MuTau+TauTau: /gwteraz/users/brivio/SKIMS_Legacy2016_16Feb2021/SKIM_GGHH_NLO_cHHH1_xs/total.root
+#ETau: /gwteraz/users/brivio/SKIMS_Legacy2016_16Feb2021_ETau/SKIM_GGHH_NLO_cHHH1_xs/total.root
+#
+#2018
+#MuTau+TauTau: /gwteraz/users/brivio/SKIMS_Legacy2018_16Feb2021/SKIM_GGHH_NLO_cHHH1_xs/total.root
+#ETau: /gwteraz/users/brivio/SKIMS_Legacy2018_16Feb2021_ETau/SKIM_GGHH_NLO_cHHH1_xs/total.root
+
+# Training su GGF run2
+#TEST_10_100_mae_ggf_run2_SR_noWeights-activation-relu-batch_size-2048-mae-Adam-gu-inclusive-10-layers-100-neurons.json
+
+from optparse import OptionParser
+usage = "usage: %prog [options] <input root file> <output file name>\n\nSelect events from skimmed ntuples"
+parser = OptionParser(usage=usage)
+parser.add_option("-N", "--Nmax", dest = "Nmax",
+                                    default=None)
+
+(options,args) = parser.parse_args()
+
+if len(args) == 2:
+    input_file_str = args[0]
+    output_file_str = args[1]
+else:
+    raise RuntimeError("Please give one input file and one output file")
+
+import ROOT
+
+input_file = ROOT.TFile(input_file_str, "READ")
+tree = input_file.Get("HTauTauTree")
+
+if options.Nmax is None:
+    Nmax = tree.GetEntries()
+else:
+    Nmax = min([int(options.Nmax), tree.GetEntries()])
+
+Nevt_in = 0
+
+events = []
+
+for evt in tree:
+
+    # Select baseline events
+
+    if ( (evt.GetLeaf("pairType").GetValue(0) == 0 and evt.GetLeaf("nleps").GetValue(0) == 0 and evt.GetLeaf("nbjetscand").GetValue(0) > 1 and evt.GetLeaf("isOS").GetValue(0) != 0 and evt.GetLeaf("dau1_iso"         ).GetValue(0)<0.15 and evt.GetLeaf("dau2_deepTauVsJet").GetValue(0)>=5 ) or 
+         (evt.GetLeaf("pairType").GetValue(0) == 1 and evt.GetLeaf("nleps").GetValue(0) == 0 and evt.GetLeaf("nbjetscand").GetValue(0) > 1 and evt.GetLeaf("isOS").GetValue(0) != 0 and evt.GetLeaf("dau1_eleMVAiso"   ).GetValue(0)==1   and evt.GetLeaf("dau2_deepTauVsJet").GetValue(0)>=5 ) or
+	 (evt.GetLeaf("pairType").GetValue(0) == 2 and evt.GetLeaf("nleps").GetValue(0) == 0 and evt.GetLeaf("nbjetscand").GetValue(0) > 1 and evt.GetLeaf("isOS").GetValue(0) != 0 and evt.GetLeaf("dau1_deepTauVsJet").GetValue(0)>=5   and evt.GetLeaf("dau2_deepTauVsJet").GetValue(0)>=5 ) ) : 
+    
+         # SVFIT used as target - must be physical
+    
+    	 if(evt.GetLeaf("tauH_SVFIT_mass").GetValue(0) < 0): continue
+    
+    	 Nevt_in += 1
+
+    	 if Nevt_in%1000 == 0:
+    	     print("\nEvent {}:".format(Nevt_in))
+
+    	 if(evt.GetLeaf("pairType").GetValue(0) == 0): channel = "mt"
+    	 if(evt.GetLeaf("pairType").GetValue(0) == 1): channel = "et"
+    	 if(evt.GetLeaf("pairType").GetValue(0) == 2): channel = "tt"
+    
+    	 # store variables
+    	 output = {
+    	     "channel" : channel,
+    	 }
+
+    	 # leptons
+    	 output["tau1_pt" ] = evt.GetLeaf("dau1_pt" ).GetValue(0)
+    	 output["tau1_eta"] = evt.GetLeaf("dau1_eta").GetValue(0)
+    	 output["tau1_phi"] = evt.GetLeaf("dau1_phi").GetValue(0)
+    	 output["tau2_pt" ] = evt.GetLeaf("dau2_pt" ).GetValue(0)
+    	 output["tau2_eta"] = evt.GetLeaf("dau2_eta").GetValue(0)
+    	 output["tau2_phi"] = evt.GetLeaf("dau2_phi").GetValue(0)
+    	     
+    	 # MET and METcov
+    	 output["MET_pt"] = evt.GetLeaf("met_et").GetValue(0)
+    
+    	 if(evt.GetLeaf("met_phi").GetValue(0) >= ROOT.TMath.Pi()):
+    	     output["MET_phi"] = evt.GetLeaf("met_phi").GetValue(0) - 2*ROOT.TMath.Pi()
+	     
+    	 else:
+    	     output["MET_phi"] = evt.GetLeaf("met_phi").GetValue(0)
+    
+    	 output["MET_covXX"] = evt.GetLeaf("met_cov00").GetValue(0)
+    	 output["MET_covXY"] = evt.GetLeaf("met_cov01").GetValue(0)
+    	 output["MET_covYY"] = evt.GetLeaf("met_cov11").GetValue(0)
+    
+    	 # Add PUPPI MET?    
+
+    	 # PU primary vertices
+    	 output["PU_npvs"] = evt.GetLeaf("npv").GetValue(0)
+
+    	 # Any btag requirement?
+
+    	 # b-jets
+    	 output["bjet1_pt"	  ] = evt.GetLeaf("bjet1_pt"		).GetValue(0)
+    	 output["bjet1_eta"	  ] = evt.GetLeaf("bjet1_eta"		).GetValue(0)
+    	 output["bjet1_phi"	  ] = evt.GetLeaf("bjet1_phi"		).GetValue(0)
+    	 output["bjet1_deepFlavor"] = evt.GetLeaf("bjet1_bID_deepFlavor").GetValue(0)
+    	 output["bjet2_pt"	  ] = evt.GetLeaf("bjet2_pt"		).GetValue(0)
+    	 output["bjet2_eta"	  ] = evt.GetLeaf("bjet2_eta"		).GetValue(0)
+    	 output["bjet2_phi"	  ] = evt.GetLeaf("bjet2_phi"		).GetValue(0)
+    	 output["bjet2_deepFlavor"] = evt.GetLeaf("bjet2_bID_deepFlavor").GetValue(0)
+
+    	 # VBF-jets
+    	 if(evt.GetLeaf("VBFjet1_pt").GetValue(0) > 0):
+    
+    	     output["VBFjet1_pt"	] = evt.GetLeaf("VBFjet1_pt"		 ).GetValue(0)
+    	     output["VBFjet1_eta"	] = evt.GetLeaf("VBFjet1_eta"		 ).GetValue(0)
+    	     output["VBFjet1_phi"	] = evt.GetLeaf("VBFjet1_phi"		 ).GetValue(0)
+    	     output["VBFjet1_deepFlavor"] = evt.GetLeaf("VBFjet1_btag_deepFlavor").GetValue(0)
+    
+    	     output["VBFjet2_pt"	] = evt.GetLeaf("VBFjet2_pt"		 ).GetValue(0)
+    	     output["VBFjet2_eta"	] = evt.GetLeaf("VBFjet2_eta"		 ).GetValue(0)
+    	     output["VBFjet2_phi"	] = evt.GetLeaf("VBFjet2_phi"		 ).GetValue(0)
+    	     output["VBFjet2_deepFlavor"] = evt.GetLeaf("VBFjet2_btag_deepFlavor").GetValue(0)
+
+    	 else:
+    
+    	     output["VBFjet1_pt"	] = 0.
+    	     output["VBFjet1_eta"	] = 0.
+    	     output["VBFjet1_phi"	] = 0.
+    	     output["VBFjet1_deepFlavor"] = 0.
+    
+    	     output["VBFjet2_pt"	] = 0.
+    	     output["VBFjet2_eta"	] = 0.
+    	     output["VBFjet2_phi"	] = 0.
+    	     output["VBFjet2_deepFlavor"] = 0.
+
+
+    # Kinematic quantities of additional jets used in the analysis might be added
+    
+#    output["addJetCentr1_pt" ] = evt.GetLeaf("addJetCentr1_pt" ).GetValue(0)
+#    output["addJetCentr1_eta"] = evt.GetLeaf("addJetCentr1_eta").GetValue(0)
+#    output["addJetCentr1_phi"] = evt.GetLeaf("addJetCentr1_phi").GetValue(0)
+#    
+#    output["addJetCentr2_pt" ] = evt.GetLeaf("addJetCentr2_pt" ).GetValue(0)
+#    output["addJetCentr2_eta"] = evt.GetLeaf("addJetCentr2_eta").GetValue(0)
+#    output["addJetCentr2_phi"] = evt.GetLeaf("addJetCentr2_phi").GetValue(0)
+#    
+#    output["addJetCentr3_pt" ] = evt.GetLeaf("addJetCentr3_pt" ).GetValue(0)
+#    output["addJetCentr3_eta"] = evt.GetLeaf("addJetCentr3_eta").GetValue(0)
+#    output["addJetCentr3_phi"] = evt.GetLeaf("addJetCentr3_phi").GetValue(0)
+#   
+#    output["addJetForw1_pt" ] = evt.GetLeaf("addJetForw1_pt" ).GetValue(0)
+#    output["addJetForw1_eta"] = evt.GetLeaf("addJetForw1_eta").GetValue(0)
+#    output["addJetForw1_phi"] = evt.GetLeaf("addJetForw1_phi").GetValue(0)
+#    
+#    output["addJetForw2_pt" ] = evt.GetLeaf("addJetForw2_pt" ).GetValue(0)
+#    output["addJetForw2_eta"] = evt.GetLeaf("addJetForw2_eta").GetValue(0)
+#    output["addJetForw2_phi"] = evt.GetLeaf("addJetForw2_phi").GetValue(0)
+
+         # Mass variables computed in the next step
+    
+         # Add target variable: SVFIT mass
+
+         output["tauH_SVFIT_mass"] = evt.GetLeaf("tauH_SVFIT_mass").GetValue(0)
+    
+    	 if Nevt_in > Nmax:
+    	     break
+
+    	 events.append(output)  
+
+#print events
+
+data = {}
+for event in events:
+    for var in event:
+        if var not in data:
+            data[var] = []
+        data[var].append(event[var])
+
+#print data
+
+cols = list(data.keys())
+cols.sort()
+
+#print cols
+
+file = open('{}.txt'.format(output_file_str), 'w')
+s = " ".join(cols)
+file.write(s+"\n")
+for k in range(len(data[cols[1]])):
+    s= " ".join([str(data[c][k]) for c in cols])
+    file.write(s+"\n")
+file.close()
