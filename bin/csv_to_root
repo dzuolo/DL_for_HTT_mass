@@ -1,0 +1,17 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+import ROOT
+
+from optparse import OptionParser
+
+usage = "usage: %prog [options] <input csv file> <output file name>"
+parser = OptionParser(usage=usage)
+
+(options,args) = parser.parse_args()
+
+input_file_str = args[0]
+output_file_str = args[1]
+
+df = ROOT.RDF.MakeCsvDataFrame(input_file_str+".csv")
+df.Snapshot("HTauTauTree",output_file_str+".root")
