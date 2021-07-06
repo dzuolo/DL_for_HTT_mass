@@ -7,6 +7,7 @@ import DL_for_HTT.post_training.utils as utils
 import DL_for_HTT.post_training.macros as macros
 
 from argparse import ArgumentParser
+
 usage = "usage: prog [options] <NN JSON file> <NN input file>\n\nPlot models responses, variables distributions, etc."
 parser = ArgumentParser(usage=usage)
 parser.add_argument("--model", required = True, type=str, help="json file from model saving.")
@@ -50,6 +51,8 @@ parser.add_argument("--max_resp",
                     help = "Upper y axis boundary for response plots.")
 parser.add_argument("--plot_relres_model_ref_1TeV", default = False, action='store_true',
                     help = "Adds the B'' model relative resolution of the plot to ease comparisons")
+parser.add_argument("--saveCSVFile", default = False,
+                    help = "Save DataFrame as CSV File")
 
 args = parser.parse_args()
 
@@ -121,6 +124,9 @@ df = utils.load_h5_file_and_predict(
     inputs = model_inputs,
     target = NN_default_settings.target,
 )
+
+if args.saveCSVFile :
+    df.to_csv("CSVWithPredictions-{}.csv".format(model_name), index=False)
 
 # Filter the dataframe
 if args.subsample == 'all':
