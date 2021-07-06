@@ -424,7 +424,7 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
                      metrics=[keras.metrics.mae])
     
     # Train model
-    epochs = 200
+    epochs = 500
     print('Epochs: ', epochs)
     print('Batch size: ', batch_size)
 
