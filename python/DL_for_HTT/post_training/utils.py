@@ -138,6 +138,12 @@ def load_h5_file_and_predict(input_h5, loaded_model, model_type, model_name, onl
             for subsample in ["is_train", "is_valid", "is_test"]:
                 if "{leg}_{variable}_gen".format(leg=leg, variable=variable) in inputs:
                     df.loc[(df["{leg}_{variable}_gen".format(leg=leg, variable=variable)] == -10), [subsample]] = False
+
+    df["pairType"] = np.zeros(len(df["channel"]), dtype='int')
+    df.loc[(df["channel"] == "mt"), ["pairType"]] = 0
+    df.loc[(df["channel"] == "et"), ["pairType"]] = 1
+    df.loc[(df["channel"] == "tt"), ["pairType"]] = 2
+
         
     if model_type == None:
         df["predictions"] = df[model_name]
