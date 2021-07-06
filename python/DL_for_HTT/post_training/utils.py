@@ -143,7 +143,10 @@ def load_h5_file_and_predict(input_h5, loaded_model, model_type, model_name, onl
     df.loc[(df["channel"] == "mt"), ["pairType"]] = 0
     df.loc[(df["channel"] == "et"), ["pairType"]] = 1
     df.loc[(df["channel"] == "tt"), ["pairType"]] = 2
-
+     
+    df["is_train"] = df["is_train"].astype(int)
+    df["is_valid"] = df["is_valid"].astype(int)
+    df["is_test"] = df["is_test"].astype(int)
         
     if model_type == None:
         df["predictions"] = df[model_name]
