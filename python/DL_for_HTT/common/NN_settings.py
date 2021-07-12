@@ -9,13 +9,14 @@ channels = "inclusive"
 
 # NN structure
 Nlayers = 10
-Nneurons = 100
+Nneurons = 150
 
 # NN training
-loss = "mapesqrt_b"
+loss = "mae"
 optimizer = "Adam"
 w_init_mode = "glorot_uniform"
 activation = "relu"
+regularizer = "l2"
 
 # Dataset splitting
 train_frac = 0.7

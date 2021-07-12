@@ -48,8 +48,8 @@ parser.add_option("-B", "--batch_size", dest = "batch_size",
                   default =  2048,
                   help = "Batch size, default = 2048")
 parser.add_option("-r", "--regularizer", dest = "kernel_regularizer",
-                  default = None,
-                  help = "kernel regularizer to use, default is None. Could be L2 for instance.")
+                  default = NN_default_settings.regularizer,
+                  help = "kernel regularizer to use, default is L2")
 parser.add_option("-d", "--dropout", dest = "dropout_rate",
                   default = 0,
                   help = "Dropout rate after each hidden layer. Default is 0.")
@@ -369,11 +369,17 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
     df_x_valid = df_select.loc[(df_select['is_valid'] == 1), model_inputs]
     df_y_valid = df_select.loc[(df_select['is_valid'] == 1), [target, "sample_weight"]]
 
-#    from sklearn.preprocessing import StandardScaler
-#    scaler  = StandardScaler()
-#    scaler.fit(df_x_train)
-#    arr_x_train = scaler.transform(df_x_train)
-#    arr_x_valid = scaler.transform(df_x_valid)
+    # Mauro: scale inputs and save scaler
+    #from sklearn.preprocessing import StandardScaler
+    #scaler = StandardScaler()
+    #scaler.fit(df_x_train)
+    #arr_x_train = scaler.transform(df_x_train)
+    #arr_x_valid = scaler.transform(df_x_valid)
+
+    #dump(scaler, open('scaler.pkl', 'wb'))
+    #print('scaler mean   : ', scaler.mean_)
+    #print('scaler std dev: ', scaler.scale_)
+    #print('scaler std dev: ', scaler.get_params())
 
     print('Size of training set: ', len(df_x_train))
     print('Size of valid set: ', len(df_x_valid))
