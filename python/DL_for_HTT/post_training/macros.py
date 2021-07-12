@@ -682,7 +682,10 @@ def _variable_distribution(df, var, channel, data_category, model_name = None, l
     if var in [target, 'predictions']:
         plt.xlim(0, 300)
     fig.tight_layout()
-    print (df[var].describe())
+    # From https://matplotlib.org/stable/gallery/text_labels_and_annotations/annotation_demo.html
+    var_stat = "Mean: " + str(round(df[var].mean(),2)) + "\n STD: " + str(round(df[var].std(),2))
+    plt.annotate(var_stat,xy=(0.65,0.85), xycoords='figure fraction', fontsize=12)
+
     if var == "predictions":
         plt.savefig('distribution-{}-{}-{}-{}{}.{}'.format(channel, "-".join([var, "{}{}".format(prefix,model_name)]), weights_in_output_name, data_category, "-en" if language=='en' else "", file_format))
     else:
