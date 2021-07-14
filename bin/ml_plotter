@@ -38,7 +38,7 @@ parser.add_argument("--model_inputs",
                     default = None,
                     help = "Name of the model inputs list. If not provided, the script will try to look for this information in the current directory.")
 parser.add_argument("--language",
-                    default = "fr",
+                    default = "en",
                     help = "Language to use for the plots. Default is french.")
 parser.add_argument("--interactive",
                     action="store_true",
