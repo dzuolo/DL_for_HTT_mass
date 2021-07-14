@@ -9,7 +9,7 @@ channels = "inclusive"
 
 # NN structure
 Nlayers = 10
-Nneurons = 150
+Nneurons = 100
 
 # NN training
 loss = "mae"
