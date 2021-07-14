@@ -16,7 +16,7 @@ loss = "mae"
 optimizer = "Adam"
 w_init_mode = "glorot_uniform"
 activation = "relu"
-regularizer = "l2"
+regularizer = None
 
 # Dataset splitting
 train_frac = 0.7

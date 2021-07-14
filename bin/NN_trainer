@@ -49,7 +49,7 @@ parser.add_option("-B", "--batch_size", dest = "batch_size",
                   help = "Batch size, default = 2048")
 parser.add_option("-r", "--regularizer", dest = "kernel_regularizer",
                   default = NN_default_settings.regularizer,
-                  help = "kernel regularizer to use, default is L2")
+                  help = "kernel regularizer to use, default is none")
 parser.add_option("-d", "--dropout", dest = "dropout_rate",
                   default = 0,
                   help = "Dropout rate after each hidden layer. Default is 0.")
