@@ -15,6 +15,9 @@ parser.add_option("-L", "--Nlayers", dest = "Nlayers",
 parser.add_option("-N", "--Nneurons", dest = "Nneurons",
                   default = NN_default_settings.Nneurons,
                   help = "Number of neurons per hidden layer, default = {}".format(NN_default_settings.Nneurons))
+parser.add_option("-E", "--Epochs", dest = "epochs",
+                  default = NN_default_settings.epochs,
+                  help = "Number of training epochs, default = {}".format(NN_default_settings.epochs))
 parser.add_option("-g", "--gpu", dest = "gpu",
                   default = 0,
                   help = "gpu index to use, default = 0")
@@ -53,6 +56,9 @@ parser.add_option("-r", "--regularizer", dest = "kernel_regularizer",
 parser.add_option("-d", "--dropout", dest = "dropout_rate",
                   default = 0,
                   help = "Dropout rate after each hidden layer. Default is 0.")
+parser.add_option("-e", "--early", dest = "use_early_stopping",
+                  default = False,
+                  help = "Use early stopping. Default is none. Alternative is 20 epochs without improvement on validation mae")
 
 (options,args) = parser.parse_args()
 
@@ -63,6 +69,7 @@ min_mass = float(options.min_mass)
 max_mass = float(options.max_mass)
 options.batch_size = int(options.batch_size)
 options.dropout_rate = float(options.dropout_rate)
+options.epochs = int(options.epochs)
 
 input_file = args[0]
 
@@ -430,12 +437,18 @@ def NN_make_train_predict(df, model_inputs, channel = "inclusive", Nlayers = opt
                      metrics=[keras.metrics.mae])
     
     # Train model
-    epochs = 500
+    epochs = options.epochs
     print('Epochs: ', epochs)
     print('Batch size: ', batch_size)
+        
+    if options.use_early_stopping:
 
-    keras_callbacks = [keras.callbacks.EarlyStopping(monitor='val_mean_absolute_error', patience=20, verbose=0)]
-
+        keras_callbacks = [keras.callbacks.EarlyStopping(monitor='val_mean_absolute_error', patience=20, verbose=0)]
+	
+    else:
+    
+        keras_callbacks = None
+	
     history = NN_model.fit(arr_x_train, arr_y_train,
                            batch_size=batch_size,
                            epochs=epochs,
